@@ -1,9 +1,6 @@
 package com.ssu10.personal_career.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,9 +8,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Project {
+    //내 프로젝트 저장
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String name;
-    String desc;
+
+    @Column(name = "description")
+    private String description;
 }

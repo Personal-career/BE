@@ -8,6 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Recruit {
+    //채용 공고
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;

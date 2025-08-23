@@ -1,9 +1,6 @@
 package com.ssu10.personal_career.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +13,9 @@ public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    String member_id;
+
+    @Column(name = "member_id")
+    String memberId;
     String pw;
     String name;
     Date birthdate;
