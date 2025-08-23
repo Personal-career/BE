@@ -1,6 +1,8 @@
 package com.ssu10.personal_career.domain;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +12,8 @@ import lombok.Setter;
 @Setter
 public class Company {
     @Id
-    Long company_id;
-    String name;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
 }

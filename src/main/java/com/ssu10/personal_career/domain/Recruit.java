@@ -1,7 +1,6 @@
 package com.ssu10.personal_career.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,9 +9,13 @@ import lombok.Setter;
 @Setter
 public class Recruit {
     @Id
-    Long recruit_id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
 
-    Company company;
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
+
     String name;
     String content;
 }

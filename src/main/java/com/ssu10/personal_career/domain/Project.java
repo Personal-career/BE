@@ -13,7 +13,7 @@ import lombok.Setter;
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long project_id;
+    Long id;
     String name;
     String desc;
 }
