@@ -12,8 +12,12 @@ public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+    @Column(name = "member_id")
+    Long member_id;
     String name;
-
+    int period;
+    String type;
     @Column(name = "description")
     private String description;
+    String techStack;
 }
