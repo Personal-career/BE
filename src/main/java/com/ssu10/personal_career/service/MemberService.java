@@ -8,6 +8,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class MemberService {
@@ -54,4 +56,28 @@ public class MemberService {
 
         return member; // 로그인 성공 시 회원 정보 반환
     }
+
+    public Member findById(Long id) {
+        return memberRepository.findById(id).orElse(null);
+    }
+
+    public Member updateMember(Long id, Member updatedMember) {
+        return memberRepository.findById(id)
+                .map(member -> {
+                    member.setName(updatedMember.getName());
+                    member.setPhone(updatedMember.getPhone());
+                    member.setEmail(updatedMember.getEmail());
+                    return memberRepository.save(member);
+                })
+                .orElse(null);
+    }
+
+    // MemberService.java
+    public Member updateRoles(Long id, List<String> roles) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("회원 없음"));
+        member.setDesiredRoles(roles);
+        return memberRepository.save(member);
+    }
+
 }
