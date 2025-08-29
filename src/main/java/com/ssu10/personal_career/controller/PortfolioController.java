@@ -46,5 +46,4 @@ public class PortfolioController {
     public void deleteProject(@PathVariable Long id) {
         projectService.deleteProject(id);
     }
-
 }
