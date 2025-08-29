@@ -1,28 +1,33 @@
 package com.ssu10.personal_career.controller;
 
+import com.ssu10.personal_career.config.CustomUserDetails;
 import com.ssu10.personal_career.domain.Member;
 import com.ssu10.personal_career.dto.LoginRequestDto;
 import com.ssu10.personal_career.dto.SignupRequestDto;
 import com.ssu10.personal_career.repository.MemberRepository;
 import com.ssu10.personal_career.service.MemberService;
 import com.ssu10.personal_career.util.JwtUtil;
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/member")
+@RequiredArgsConstructor
 public class MemberController {
 
     private final MemberService memberService;
     private final MemberRepository memberRepository;
-
-    public MemberController(MemberService memberService, MemberRepository memberRepository) {
-        this.memberService = memberService;
-        this.memberRepository = memberRepository;
-    }
+    private final AuthenticationManager authenticationManager;
 
     @PostMapping("/signup")
     public String signup(@RequestBody SignupRequestDto dto) {
@@ -31,13 +36,24 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDto dto) {
-        Member member = memberService.login(dto);
-        if (member == null) {
+    public ResponseEntity<?> login(@RequestBody LoginRequestDto dto, HttpSession session) {
+        try {
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(dto.getMemberId(), dto.getPw());
+
+            Authentication authentication = authenticationManager.authenticate(authToken);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            session.setAttribute("member_id", userDetails.getId());
+
+            String token = JwtUtil.generateToken(userDetails.getUsername());
+            System.out.println("로그인 성공: " + userDetails.getUsername());
+            return ResponseEntity.ok(token);
+
+        } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패");
         }
-        String token = JwtUtil.generateToken(member.getMemberId());
-        return ResponseEntity.ok(token);
     }
 
     // 회원 정보 조회
@@ -92,5 +108,14 @@ public class MemberController {
         memberRepository.save(member);
 
         return ResponseEntity.ok(member.getSkills());
+    }
+
+    @GetMapping("/me")
+    public Member getCurrentMember(Authentication authentication) {
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long memberId = userDetails.getId();
+        System.out.println("/me test : member_id: " + memberId);
+
+        return memberService.findById(memberId);
     }
 }
