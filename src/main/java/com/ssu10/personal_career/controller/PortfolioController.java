@@ -20,8 +20,4 @@ public class PortfolioController {
     public List<Project> getProjects(@RequestParam(required = false) Long userId) {
         return projectService.getProjectsByMemberId(1L); //test용 상수
     }
-
-
-
-
 }
